@@ -1,53 +1,48 @@
-| Supported Targets | ESP32 | ESP32-C2 | ESP32-C3 | ESP32-C5 | ESP32-C6 | ESP32-C61 | ESP32-H2 | ESP32-H21 | ESP32-H4 | ESP32-P4 | ESP32-S2 | ESP32-S3 | Linux |
-| ----------------- | ----- | -------- | -------- | -------- | -------- | --------- | -------- | --------- | -------- | -------- | -------- | -------- | ----- |
+# ESP32-S3 AMOLED Unit Tests
 
-# Hello World Example
+Primeiro projeto funcional no ESP32-S3-Touch-AMOLED-2.06 usando ESP-IDF + LVGL.
 
-Starts a FreeRTOS task to print "Hello World".
+O objetivo deste repositório foi simplesmente conseguir:
+- compilar corretamente
+- inicializar o display AMOLED
+- integrar a BSP da Waveshare
+- configurar LVGL
+- exibir um "Hello World" na tela
+- futuramente adicionando features até completar uma "OS" totalmente funcional
 
-(See the README.md file in the upper level 'examples' directory for more information about examples.)
+## Hardware
 
-## How to use example
+- Board: Waveshare ESP32-S3-Touch-AMOLED-2.06
+- MCU: ESP32-S3
+- Display driver: CO5300
+- Touch driver: FT3168
 
-Follow detailed instructions provided specifically for this example.
+## Stack utilizada
 
-Select the instructions depending on Espressif chip installed on your development board:
+- ESP-IDF
+- LVGL
+- Waveshare BSP
 
-- [ESP32 Getting Started Guide](https://docs.espressif.com/projects/esp-idf/en/stable/get-started/index.html)
-- [ESP32-S2 Getting Started Guide](https://docs.espressif.com/projects/esp-idf/en/latest/esp32s2/get-started/index.html)
+## Problemas encontrados
 
+### Dependências quebradas
+Tive vários problemas de compatibilidade entre:
+- ESP-IDF
+- componentes da Waveshare
+- LVGL
+- toolchain
 
-## Example folder contents
+### Flash acidental do firmware original
+Durante os testes sobrescrevi parcialmente o firmware original do smartwatch.
+Consegui recuperar restaurando um backup completo da flash usando `esptool`.
 
-The project **hello_world** contains one source file in C language [hello_world_main.c](main/hello_world_main.c). The file is located in folder [main](main).
+### Display não inicializava
+O display AMOLED utiliza QSPI e não SPI convencional.
+Foi necessário utilizar a BSP oficial da Waveshare para inicialização correta.
 
-ESP-IDF projects are built using CMake. The project build configuration is contained in `CMakeLists.txt` files that provide set of directives and instructions describing the project's source files and targets (executable, library, or both).
+## Comandos úteis
 
-Below is short explanation of remaining files in the project folder.
+### Backup da flash
 
-```
-├── CMakeLists.txt
-├── pytest_hello_world.py      Python script used for automated testing
-├── main
-│   ├── CMakeLists.txt
-│   └── hello_world_main.c
-└── README.md                  This is the file you are currently reading
-```
-
-For more information on structure and contents of ESP-IDF projects, please refer to Section [Build System](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/build-system.html) of the ESP-IDF Programming Guide.
-
-## Troubleshooting
-
-* Program upload failure
-
-    * Hardware connection is not correct: run `idf.py -p PORT monitor`, and reboot your board to see if there are any output logs.
-    * The baud rate for downloading is too high: lower your baud rate in the `menuconfig` menu, and try again.
-
-## Technical support and feedback
-
-Please use the following feedback channels:
-
-* For technical queries, go to the [esp32.com](https://esp32.com/) forum
-* For a feature request or bug report, create a [GitHub issue](https://github.com/espressif/esp-idf/issues)
-
-We will get back to you as soon as possible.
+```bash
+esptool --chip esp32s3 read_flash 0 0x2000000 backup.bin
