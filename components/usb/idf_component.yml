@@ -1,0 +1,5 @@
+name: usb
+version: 0.1.0
+description: "Local stub component named 'usb' to satisfy BSP dependency during configuration"
+dependencies: {}
+build: {}
